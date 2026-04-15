@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 #networkFileRW.py
-#Pamela Brauda
-#Thursday, March 3, 2022
+#Shyan Ramsey
 #Update routers and switches;
 #read equipment from a file, write updates & errors to file
 
 ##---->>>> Use a try/except clause to import the JSON module
 
+try:
+    import json
 
+except ImportError:
+    print("File can't be opened")
+    
 
 ##---->>>> Create file constants for the file names; file constants can be reused
 ##         There are 2 files to read this program: equip_r.txt and equip_s.txt
@@ -22,6 +26,8 @@ UPDATE = "\nWhich device would you like to update "
 QUIT = "(enter x to quit)? "
 NEW_IP = "What is the new IP address (111.111.111.111) "
 SORRY = "Sorry, that is not a valid IP address\n"
+ROUTERFILE = 'equip_r.txt'
+SWITCHFILE = 'equip_s.txt'
 
 #function to get valid device
 def getValidDevice(routers, switches):
@@ -59,21 +65,19 @@ def getValidIP(invalidIPCount, invalidIPAddresses):
         
 def main():
 
-    ##---->>>> open files here
-
-
-
-    
+    ##---->>>> open files here  
     #dictionaries
     ##---->>>> read the routers and addresses into the router dictionary
 
     routers = {}
-
+    with open(ROUTERFILE, 'r') as file:
+        routers = json.load(file)
 
     ##---->>>> read the switches and addresses into the switches dictionary
 
     switches = {}
-
+    with open(SWITCHFILE) as file:
+        switches = json.load(file)
 
     #the updated dictionary holds the device name and new ip address
     updated = {}
@@ -131,14 +135,16 @@ def main():
     print("Number of devices updated:", devicesUpdatedCount)
 
     ##---->>>> write the updated equipment dictionary to a file
-
-    
+    with open('updated.txt', 'w') as file:
+        json.dump(updated, file) 
+            
     print("Updated equipment written to file 'updated.txt'")
     print()
     print("\nNumber of invalid addresses attempted:", invalidIPCount)
 
     ##---->>>> write the list of invalid addresses to a file
-    
+    with open('errors.txt', 'w') as file:
+        json.dump(invalidIPAddresses, file)
 
     print("List of invalid addresses written to file 'errors.txt'")
 
